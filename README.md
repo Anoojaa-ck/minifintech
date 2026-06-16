@@ -15,7 +15,6 @@ A professional personal finance tracker built with Next.js, TypeScript, Prisma, 
 
 - **Framework:** [Next.js 14+](https://nextjs.org/) (App Router)
 - **Language:** [TypeScript](https://www.typescriptlang.org/)
-- **Database:** [SQLite](https://www.sqlite.org/) with [Prisma ORM](https://www.prisma.io/)
 - **Styling:** Vanilla CSS (CSS Modules & Global Variables)
 - **Icons:** [Lucide React](https://lucide.dev/)
 
@@ -51,6 +50,7 @@ A professional personal finance tracker built with Next.js, TypeScript, Prisma, 
 
 5. **Open the app:**
    Navigate to [http://localhost:3000](http://localhost:3000) in your browser.
+   Demo URL [Mini-Fintech Demo](https://dazzling-granita-e301cd.netlify.app/)
 
 ## Project Structure
 
@@ -62,5 +62,5 @@ A professional personal finance tracker built with Next.js, TypeScript, Prisma, 
 
 ## Deployment
 
-This app is ready to be deployed to [Vercel](https://vercel.com/). 
-Note: Since this version uses SQLite, it is intended for local demonstration. For production deployment with persistent data, it is recommended to use a hosted PostgreSQL database (like Neon or Supabase) by simply updating the `DATABASE_URL` in the `.env` file and changing the provider in `prisma/schema.prisma`.
+This app is ready to be deployed to [Netlify](https://dazzling-granita-e301cd.netlify.app/). 
+
