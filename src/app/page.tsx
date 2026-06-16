@@ -1,15 +1,26 @@
+'use client'
+
+import { useState, useEffect, useCallback } from 'react'
 import { getSummary, getTransactions } from '@/actions/transactions'
 import SummaryHeader from '@/components/SummaryHeader'
 import InsightBanner from '@/components/InsightBanner'
 import TransactionList from '@/components/TransactionList'
 import AddTransactionForm from '@/components/AddTransactionForm'
 import CategoryChart from '@/components/CategoryChart'
+import type { Transaction } from '@/lib/storage'
 
-export const dynamic = 'force-dynamic'
+export default function DashboardPage() {
+  const [summary, setSummary] = useState<ReturnType<typeof getSummary> | null>(null)
+  const [transactions, setTransactions] = useState<Transaction[]>([])
 
-export default async function DashboardPage() {
-  const summary = await getSummary()
-  const transactions = await getTransactions()
+  const loadData = useCallback(() => {
+    setSummary(getSummary())
+    setTransactions(getTransactions())
+  }, [])
+
+  useEffect(() => {
+    loadData()
+  }, [loadData])
 
   return (
     <div className="container">
@@ -22,18 +33,18 @@ export default async function DashboardPage() {
         </p>
       </div>
 
-      <SummaryHeader data={summary} />
-      
-      <InsightBanner summary={summary} />
+      {summary && <SummaryHeader data={summary} />}
+
+      {summary && <InsightBanner summary={summary} />}
 
       <div className="dashboard-grid">
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <TransactionList transactions={transactions} />
-          <CategoryChart data={summary.categoryBreakdown} />
+          <TransactionList transactions={transactions} onAction={loadData} />
+          {summary && <CategoryChart data={summary.categoryBreakdown} />}
         </div>
-        
+
         <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem' }}>
-          <AddTransactionForm />
+          <AddTransactionForm onSuccess={loadData} />
         </div>
       </div>
     </div>

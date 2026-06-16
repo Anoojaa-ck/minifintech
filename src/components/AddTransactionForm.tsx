@@ -4,7 +4,7 @@ import { useState, useRef } from 'react'
 import { addTransaction } from '@/actions/transactions'
 import { Plus } from 'lucide-react'
 
-export default function AddTransactionForm() {
+export default function AddTransactionForm({ onSuccess }: { onSuccess?: () => void }) {
   const [loading, setLoading] = useState(false)
   const formRef = useRef<HTMLFormElement>(null)
 
@@ -15,8 +15,9 @@ export default function AddTransactionForm() {
     setLoading(true)
     const formData = new FormData(formRef.current)
     try {
-      await addTransaction(formData)
+      addTransaction(formData)
       formRef.current.reset()
+      onSuccess?.()
     } catch (error) {
       console.error('Failed to add transaction:', error)
       alert('Error adding transaction. Please try again.')

@@ -1,85 +1,75 @@
-'use server'
+import {
+  type Transaction,
+  getAllTransactions as getStored,
+  addTransaction as addStored,
+  deleteTransaction as deleteStored,
+} from '@/lib/storage'
 
-import { prisma } from '@/lib/prisma'
-import { revalidatePath } from 'next/cache'
-import { Prisma } from '@prisma/client'
-
-export async function addTransaction(formData: FormData) {
+export function addTransaction(formData: FormData) {
   const amount = parseFloat(formData.get('amount') as string)
   let category = (formData.get('category') as string).trim()
-  // Normalize to Title Case (e.g., "food" -> "Food")
   category = category.charAt(0).toUpperCase() + category.slice(1).toLowerCase()
-  
+
   const type = formData.get('type') as string
   const date = new Date(formData.get('date') as string)
   const note = formData.get('note') as string || null
 
-  await prisma.transaction.create({
-    data: {
-      amount,
-      category,
-      type,
-      date,
-      note,
-    },
+  addStored({
+    id: crypto.randomUUID(),
+    amount,
+    category,
+    type,
+    date,
+    note,
+    createdAt: new Date(),
   })
-
-  revalidatePath('/')
 }
 
-export async function deleteTransaction(id: string) {
-  await prisma.transaction.delete({
-    where: { id },
-  })
-  revalidatePath('/')
+export function deleteTransaction(id: string) {
+  deleteStored(id)
 }
 
-export async function getTransactions(filters: { category?: string, startDate?: string, endDate?: string } = {}) {
+export function getTransactions(filters: { category?: string; startDate?: string; endDate?: string } = {}) {
   const { category, startDate, endDate } = filters
-  
-  const where: Prisma.TransactionWhereInput = {}
-  
+  let transactions = getStored()
+
   if (category && category !== 'All') {
-    // Casing is handled by Title Case normalization in addTransaction
-    where.category = category
-  }
-  
-  if (startDate || endDate) {
-    const dateFilter: Prisma.DateTimeFilter = {}
-    if (startDate) dateFilter.gte = new Date(startDate)
-    if (endDate) dateFilter.lte = new Date(endDate)
-    where.date = dateFilter
+    transactions = transactions.filter((t) => t.category === category)
   }
 
-  return await prisma.transaction.findMany({
-    where,
-    orderBy: {
-      date: 'desc',
-    },
-  })
+  if (startDate) {
+    const start = new Date(startDate)
+    transactions = transactions.filter((t) => t.date >= start)
+  }
+
+  if (endDate) {
+    const end = new Date(endDate + 'T23:59:59')
+    transactions = transactions.filter((t) => t.date <= end)
+  }
+
+  return transactions.sort((a, b) => b.date.getTime() - a.date.getTime())
 }
 
-export async function getSummary() {
-  const transactions = await prisma.transaction.findMany()
-  
+export function getSummary() {
+  const transactions = getStored()
+
   let totalIncome = 0
   let totalExpense = 0
   const categoryMap: Record<string, number> = {}
 
-  transactions.forEach((t) => {
+  for (const t of transactions) {
     if (t.type === 'INCOME') {
       totalIncome += t.amount
     } else {
       totalExpense += t.amount
-      // Ensure existing data is grouped correctly regardless of initial casing
       const normalizedCat = t.category.charAt(0).toUpperCase() + t.category.slice(1).toLowerCase()
       categoryMap[normalizedCat] = (categoryMap[normalizedCat] || 0) + t.amount
     }
-  })
+  }
 
   let topCategory = 'None'
   let maxSpend = 0
-  
+
   for (const [cat, spend] of Object.entries(categoryMap)) {
     if (spend > maxSpend) {
       maxSpend = spend

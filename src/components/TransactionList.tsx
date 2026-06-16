@@ -15,9 +15,10 @@ interface Transaction {
 
 interface ListProps {
   transactions: Transaction[]
+  onAction?: () => void
 }
 
-export default function TransactionList({ transactions }: ListProps) {
+export default function TransactionList({ transactions, onAction }: ListProps) {
   const [categoryFilter, setCategoryFilter] = useState('All')
   const [startDate, setStartDate] = useState('')
   const [endDate, setEndDate] = useState('')
@@ -30,7 +31,8 @@ export default function TransactionList({ transactions }: ListProps) {
     if (!confirm('Are you sure you want to delete this transaction?')) return
     setIsDeleting(id)
     try {
-      await deleteTransaction(id)
+      deleteTransaction(id)
+      onAction?.()
     } catch (error) {
       console.error('Delete failed:', error)
       alert('Failed to delete transaction.')
