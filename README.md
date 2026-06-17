@@ -1,6 +1,6 @@
 # Mini Fintech - Personal Finance Tracker
 
-A professional personal finance tracker built with Next.js, TypeScript, Prisma, and SQLite. This project was developed as a take-home assignment for a software engineering role.
+A professional personal finance tracker built with Next.js and TypeScript. This project was developed as a take-home assignment for a software engineering role.
 
 ## Features
 
