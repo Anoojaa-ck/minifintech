@@ -8,7 +8,7 @@ A professional personal finance tracker built with Next.js, TypeScript, Prisma, 
 - **Transaction Logging:** Easily add income and expenses with categories, dates, and optional notes.
 - **Smart Filtering:** Dual-filter system to view transactions by category and date range simultaneously.
 - **Spending Insights:** Rule-based observations that highlight spending patterns and financial health.
-- **Data Visualization:** A custom horizontal bar chart showing spending breakdown by category.
+- **Data Visualization:** A customchart showing spending breakdown by category.
 - **Responsive Design:** A clean, modern "Professional" UI that works on desktop and mobile.
 
 ## Tech Stack
