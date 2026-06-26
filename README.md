@@ -57,7 +57,7 @@ A professional personal finance tracker built with Next.js and TypeScript. This 
 - `src/app`: Next.js pages and layouts.
 - `src/actions`: Server actions for database operations.
 - `src/components`: Reusable UI components.
-- `src/lib`: Shared libraries (Prisma client).
+- `src/lib`: Shared libraries.
 - `prisma`: Database schema and migrations.
 
 ## Deployment
